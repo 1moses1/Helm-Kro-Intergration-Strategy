@@ -1,0 +1,73 @@
+﻿apiVersion: kro.run/v1alpha1
+kind: FormApp
+metadata:
+  name: {{ .Values.formapp.name }}-instance
+  namespace: {{ .Values.formapp.namespace }}
+  labels:
+    {{- include "formapp-stack.labels" . | nindent 4 }}
+spec:
+  name: {{ .Values.formapp.name }}
+  
+  # Application configuration - templated from values.yaml
+  app:
+    enabled: {{ .Values.formapp.app.enabled }}
+    name: {{ .Values.formapp.app.name }}
+    image: {{ .Values.formapp.app.image }}
+    
+    # HPA configuration
+    hpa:
+      enabled: {{ .Values.formapp.app.hpa.enabled }}
+      minReplicas: {{ .Values.formapp.app.hpa.minReplicas }}
+      maxReplicas: {{ .Values.formapp.app.hpa.maxReplicas }}
+      targetCPUUtilizationPercentage: {{ .Values.formapp.app.hpa.targetCPUUtilizationPercentage }}
+      targetMemoryUtilizationPercentage: {{ .Values.formapp.app.hpa.targetMemoryUtilizationPercentage }}
+    
+    # Resource requests and limits
+    resources:
+      requests:
+        cpu: {{ .Values.formapp.app.resources.requests.cpu | quote }}
+        memory: {{ .Values.formapp.app.resources.requests.memory | quote }}
+      limits:
+        cpu: {{ .Values.formapp.app.resources.limits.cpu | quote }}
+        memory: {{ .Values.formapp.app.resources.limits.memory | quote }}
+    
+    # Service configuration
+    service:
+      type: {{ .Values.formapp.app.service.type }}
+      port: {{ .Values.formapp.app.service.port }}
+      targetPort: {{ .Values.formapp.app.service.targetPort }}
+    
+    # Ingress configuration
+    ingress:
+      enabled: {{ .Values.formapp.app.ingress.enabled }}
+  
+  # Database configuration - templated from values.yaml
+  database:
+    enabled: {{ .Values.formapp.database.enabled }}
+    name: {{ .Values.formapp.database.name }}
+    image: {{ .Values.formapp.database.image }}
+    replicas: {{ .Values.formapp.database.replicas }}
+    dbName: {{ .Values.formapp.database.dbName }}
+    username: {{ .Values.formapp.database.username }}
+    password: {{ .Values.formapp.database.password }}
+    
+    # Resource requests and limits for database
+    resources:
+      requests:
+        cpu: {{ .Values.formapp.database.resources.requests.cpu | quote }}
+        memory: {{ .Values.formapp.database.resources.requests.memory | quote }}
+      limits:
+        cpu: {{ .Values.formapp.database.resources.limits.cpu | quote }}
+        memory: {{ .Values.formapp.database.resources.limits.memory | quote }}
+    
+    # Service configuration for database
+    service:
+      port: {{ .Values.formapp.database.service.port }}
+      targetPort: {{ .Values.formapp.database.service.targetPort }}
+    
+    # Persistent storage configuration
+    storage:
+      enabled: {{ .Values.formapp.database.storage.enabled }}
+      storageClass: {{ .Values.formapp.database.storage.storageClass }}
+      size: {{ .Values.formapp.database.storage.size }}
+      accessMode: {{ .Values.formapp.database.storage.accessMode }}

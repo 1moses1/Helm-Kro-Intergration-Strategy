@@ -1,0 +1,49 @@
+# Default values for formapp-stack
+formapp:
+  name: formapp-stack                   # Name identifier for this stack (used in resource names)
+  app:
+    enabled: true
+    name: form-app                      # Application Deployment name
+    image: "moses101/form-app:latest"   # Container image for the application
+    hpa:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 5
+      targetCPUUtilizationPercentage: 65
+      targetMemoryUtilizationPercentage: 70
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
+      limits:
+        cpu: "300m"
+        memory: "1Gi"
+    service:
+      type: LoadBalancer
+      port: 8086
+      targetPort: 8086
+    ingress:
+      enabled: false
+  database:
+    enabled: true
+    name: postgres                      # Name for the PostgreSQL database StatefulSet
+    image: "bitnami/postgresql:12.1.0"
+    replicas: 1
+    dbName: formdb
+    username: postgres
+    password: postgres
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "512Mi"
+      limits:
+        cpu: "1"        # 1 core
+        memory: "2Gi"
+    service:
+      port: 5432
+      targetPort: 5432
+    storage:
+      enabled: true
+      storageClass: longhorn
+      size: 3Gi
+      accessMode: ReadWriteOnce

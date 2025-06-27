@@ -1,0 +1,6 @@
+apiVersion: v2
+name: formapp-stack
+description: Helm chart for the FormApp stack (CRD, RGD, and instance)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

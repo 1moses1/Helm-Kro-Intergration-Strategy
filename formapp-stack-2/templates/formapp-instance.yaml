@@ -1,0 +1,52 @@
+apiVersion: kro.run/v1alpha1
+kind: FormApp
+metadata:
+  name: {{ .Release.Name }}-formapp-instance
+spec:
+  name: {{ .Values.formapp.name }}
+  app:
+    enabled: {{ .Values.formapp.app.enabled }}
+    name: {{ .Values.formapp.app.name }}
+    image: {{ .Values.formapp.app.image | quote }}
+    hpa:
+      enabled: {{ .Values.formapp.app.hpa.enabled }}
+      minReplicas: {{ .Values.formapp.app.hpa.minReplicas }}
+      maxReplicas: {{ .Values.formapp.app.hpa.maxReplicas }}
+      targetCPUUtilizationPercentage: {{ .Values.formapp.app.hpa.targetCPUUtilizationPercentage }}
+      targetMemoryUtilizationPercentage: {{ .Values.formapp.app.hpa.targetMemoryUtilizationPercentage }}
+    resources:
+      requests:
+        cpu: {{ .Values.formapp.app.resources.requests.cpu | quote }}
+        memory: {{ .Values.formapp.app.resources.requests.memory | quote }}
+      limits:
+        cpu: {{ .Values.formapp.app.resources.limits.cpu | quote }}
+        memory: {{ .Values.formapp.app.resources.limits.memory | quote }}
+    service:
+      type: {{ .Values.formapp.app.service.type }}
+      port: {{ .Values.formapp.app.service.port }}
+      targetPort: {{ .Values.formapp.app.service.targetPort }}
+    ingress:
+      enabled: {{ .Values.formapp.app.ingress.enabled }}
+  database:
+    enabled: {{ .Values.formapp.database.enabled }}
+    name: {{ .Values.formapp.database.name }}
+    image: {{ .Values.formapp.database.image | quote }}
+    replicas: {{ .Values.formapp.database.replicas }}
+    dbName: {{ .Values.formapp.database.dbName }}
+    username: {{ .Values.formapp.database.username | quote }}
+    password: {{ .Values.formapp.database.password | quote }}
+    resources:
+      requests:
+        cpu: {{ .Values.formapp.database.resources.requests.cpu | quote }}
+        memory: {{ .Values.formapp.database.resources.requests.memory | quote }}
+      limits:
+        cpu: {{ .Values.formapp.database.resources.limits.cpu | quote }}
+        memory: {{ .Values.formapp.database.resources.limits.memory | quote }}
+    service:
+      port: {{ .Values.formapp.database.service.port }}
+      targetPort: {{ .Values.formapp.database.service.targetPort }}
+    storage:
+      enabled: {{ .Values.formapp.database.storage.enabled }}
+      storageClass: {{ .Values.formapp.database.storage.storageClass | quote }}
+      size: {{ .Values.formapp.database.storage.size | quote }}
+      accessMode: {{ .Values.formapp.database.storage.accessMode | quote }}

@@ -1,0 +1,19 @@
+﻿apiVersion: v2
+name: formapp-stack
+description: A Helm chart for FormApp powered by KRO (Kubernetes Resource Operator)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - formapp
+  - kro
+  - database
+  - postgresql
+home: https://github.com/your-org/formapp-stack
+sources:
+  - https://github.com/your-org/formapp-stack
+maintainers:
+  - name: Your Name
+    email: your.email@example.com
+annotations:
+  category: Application

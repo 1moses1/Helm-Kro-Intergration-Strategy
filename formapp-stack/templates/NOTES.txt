@@ -1,0 +1,29 @@
+﻿1. Get the application URL by running these commands:
+{{- if .Values.formapp.app.service.type == "LoadBalancer" }}
+  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+        You can watch the status by running 'kubectl get --namespace {{ .Values.formapp.namespace }} svc -w {{ .Values.formapp.app.name }}-svc'
+  
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Values.formapp.namespace }} {{ .Values.formapp.app.name }}-svc --template "{{ "{{" }} range (index .status.loadBalancer.ingress 0) {{ "}}" }}{{ "{{" }}.{{ "}}" }}{{ "{{" }} end {{ "}}" }}")
+  echo http://$SERVICE_IP:{{ .Values.formapp.app.service.port }}
+
+{{- else if .Values.formapp.app.service.type == "ClusterIP" }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Values.formapp.namespace }} -l "app={{ .Values.formapp.app.name }}" -o jsonpath="{.items[0].metadata.name}")
+  export CONTAINER_PORT=$(kubectl get pod --namespace {{ .Values.formapp.namespace }} $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+  echo "Visit http://127.0.0.1:8080 to use your application"
+  kubectl --namespace {{ .Values.formapp.namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
+
+{{- end }}
+
+2. Monitor the FormApp instance:
+   kubectl get formapp -n {{ .Values.formapp.namespace }}
+
+3. Check the status of KRO-managed resources:
+   kubectl describe formapp {{ .Values.formapp.name }}-instance -n {{ .Values.formapp.namespace }}
+
+4. View application logs:
+   kubectl logs -l app={{ .Values.formapp.app.name }} -n {{ .Values.formapp.namespace }}
+
+5. View database logs:
+   kubectl logs -l app={{ .Values.formapp.database.name }} -n {{ .Values.formapp.namespace }}
+
+Thank you for using FormApp Stack powered by KRO! 🚀
