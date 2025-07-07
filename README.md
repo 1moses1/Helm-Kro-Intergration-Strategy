@@ -1,6 +1,6 @@
 # FormApp Stack Helm Chart - Integration Strategy
 
-This repository demonstrates two different approaches for deploying a FormApp with PostgreSQL database using Helm charts, showcasing the evolution from KRO-powered orchestration to purely native Helm implementations.
+This repository demonstrates two different approaches for deploying a FormApp with PostgreSQL database using Helm charts, showcasing the evolution from purely native Helm implementations to .
 
 ## Repository Structure
 
@@ -31,22 +31,6 @@ Both implementations provide:
 - **Persistent Storage**: Configurable storage for PostgreSQL
 - **Production-Ready**: Suitable for production environments
 
-## KRO-Powered Implementation
-
-Located in `formapp-kro-powered-helm/`
-
-### Features
-- **KRO-Powered Orchestration**: Uses KRO for sophisticated resource management and reconciliation
-- **Helm Package Management**: Leverages Helm for versioning, templating, and release management
-- **Advanced Reconciliation**: KRO handles complex dependency management
-- **Pre-install Hooks**: Ensures proper installation order (CRD → RGD → Instance)
-
-### Prerequisites
-- Kubernetes 1.19+
-- Helm 3.0+
-- KRO Controller installed and running in your cluster
-- Storage class configured (default: longhorn)
-
 ## Purely Native Implementation
 
 Located in `formapp-purely-helm-native/`
@@ -60,6 +44,22 @@ Located in `formapp-purely-helm-native/`
 ### Prerequisites
 - Kubernetes 1.19+
 - Helm 3.0+
+- Storage class configured (default: longhorn)
+
+## KRO-Powered Implementation
+
+Located in `formapp-kro-powered-helm/`
+
+### Features
+- **KRO-Powered Orchestration**: Uses KRO for sophisticated resource management and reconciliation
+- **Helm Package Management**: Leverages Helm for versioning, templating, and release management
+- **Advanced Reconciliation**: KRO handles complex dependency management
+- **Helm's native logic of priorizing CRDs**: Ensures proper installation order (CRD → RGD → Instance)
+
+### Prerequisites
+- Kubernetes 1.19+
+- Helm 3.0+
+- KRO Controller installed and running in your cluster
 - Storage class configured (default: longhorn)
 
 ## Installation
