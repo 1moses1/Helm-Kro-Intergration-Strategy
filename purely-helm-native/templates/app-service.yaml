@@ -1,0 +1,21 @@
+{{- if .Values.formapp.app.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.formapp.app.name }}-svc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "formapp-stack.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: application
+spec:
+  type: {{ .Values.formapp.app.service.type }}
+  selector:
+    app: {{ .Values.formapp.app.name }}
+    app.kubernetes.io/name: {{ include "formapp-stack.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+    - port: {{ .Values.formapp.app.service.port }}
+      targetPort: {{ .Values.formapp.app.service.targetPort }}
+      name: http
+{{- end }}

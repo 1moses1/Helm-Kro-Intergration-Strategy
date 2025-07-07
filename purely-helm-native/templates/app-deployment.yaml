@@ -1,0 +1,56 @@
+{{- if .Values.formapp.app.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.formapp.app.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "formapp-stack.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: application
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.formapp.app.name }}
+      app.kubernetes.io/name: {{ include "formapp-stack.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.formapp.app.name }}
+        app.kubernetes.io/name: {{ include "formapp-stack.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: application
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: {{ .Values.formapp.app.name }}
+          image: {{ .Values.formapp.app.image }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.formapp.app.service.targetPort }}
+              name: app-port
+          resources:
+            requests:
+              cpu: {{ .Values.formapp.app.resources.requests.cpu }}
+              memory: {{ .Values.formapp.app.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.formapp.app.resources.limits.cpu }}
+              memory: {{ .Values.formapp.app.resources.limits.memory }}
+          env:
+            {{- if .Values.formapp.database.enabled }}
+            - name: PGHOST
+              value: {{ .Values.formapp.database.name }}-svc
+            - name: PGUSER
+              value: {{ .Values.formapp.database.username }}
+            - name: PGPASSWORD
+              value: {{ .Values.formapp.database.password }}
+            - name: PGDATABASE
+              value: {{ .Values.formapp.database.dbName }}
+            - name: PGPORT
+              value: "5432"
+            {{- end }}
+            - name: PORT
+              value: "8086"
+{{- end }}

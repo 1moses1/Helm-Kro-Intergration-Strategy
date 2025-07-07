@@ -1,0 +1,18 @@
+{{- if and .Values.formapp.database.enabled .Values.formapp.database.storage.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.formapp.database.name }}-pvc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "formapp-stack.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: database
+spec:
+  accessModes:
+    - {{ .Values.formapp.database.storage.accessMode }}
+  storageClassName: {{ .Values.formapp.database.storage.storageClass }}
+  resources:
+    requests:
+      storage: {{ .Values.formapp.database.storage.size }}
+{{- end }}

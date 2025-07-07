@@ -1,0 +1,22 @@
+{{- if and .Values.formapp.app.enabled .Values.formapp.app.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.formapp.name }}-ingress
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "formapp-stack.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: application
+spec:
+  rules:
+    - http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.formapp.app.name }}-svc
+                port:
+                  number: {{ .Values.formapp.app.service.port }}
+{{- end }}

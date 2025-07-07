@@ -1,0 +1,63 @@
+{{- if .Values.formapp.database.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.formapp.database.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "formapp-stack.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: database
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.formapp.database.name }}
+      app.kubernetes.io/name: {{ include "formapp-stack.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  serviceName: {{ .Values.formapp.database.name }}-svc
+  replicas: {{ .Values.formapp.database.replicas }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.formapp.database.name }}
+        app.kubernetes.io/name: {{ include "formapp-stack.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: database
+    spec:
+      containers:
+        - name: {{ .Values.formapp.database.name }}
+          image: {{ .Values.formapp.database.image }}
+          env:
+            - name: POSTGRESQL_DATABASE
+              value: {{ .Values.formapp.database.dbName }}
+            - name: POSTGRESQL_USERNAME
+              value: {{ .Values.formapp.database.username }}
+            - name: POSTGRESQL_PASSWORD
+              value: {{ .Values.formapp.database.password }}
+          ports:
+            - containerPort: {{ .Values.formapp.database.service.targetPort }}
+              name: postgres
+          resources:
+            requests:
+              cpu: {{ .Values.formapp.database.resources.requests.cpu }}
+              memory: {{ .Values.formapp.database.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.formapp.database.resources.limits.cpu }}
+              memory: {{ .Values.formapp.database.resources.limits.memory }}
+          volumeMounts:
+            - name: init-script-volume
+              mountPath: /docker-entrypoint-initdb.d
+            {{- if .Values.formapp.database.storage.enabled }}
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+            {{- end }}
+      volumes:
+        - name: init-script-volume
+          configMap:
+            name: {{ .Values.formapp.name }}-postgres-init
+        {{- if .Values.formapp.database.storage.enabled }}
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.formapp.database.name }}-pvc
+        {{- end }}
+{{- end }}
